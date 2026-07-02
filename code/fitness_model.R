@@ -33,7 +33,20 @@ add_node <- function(g, theta, beta) {
     return(g)
 }
 
-create_links <- function(g)
+attraction_probabilities <- function(g) {
+    # creating exception for first node, k1 = 0
+    # all new m links will be connected to node k1
+    if (vcount(g) == 1) {
+        return(1)
+    }
+    else {
+        V(g)$fitness *degree(g)  / sum(V(g)$fitness * degree(g))
+    }
+}
+
+create_links <- function(g, m) {
+
+}
 
 main <- function(N,m=1, dt=1, theta=1,  beta=1) {
     # creating first node
@@ -42,9 +55,14 @@ main <- function(N,m=1, dt=1, theta=1,  beta=1) {
 
     V(g)$fitness <- draw_fitness(theta, beta)
 
-    for (t in seq(2, N, dt)):
+    for (t in seq(2, N, dt)) {
         g <- add_node(g, theta, beta)
 
         g <- create_links(g, m)
 
+    }
+    #print(vcount(g))
+    #print(V(g)$fitness)
 }
+
+main(N=10)
