@@ -1,7 +1,9 @@
 project_39.md
 cruise_networks/
+input_data/
+paper.pdf
 
-
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
