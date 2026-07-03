@@ -1,5 +1,3 @@
-source("common.R")
-source("fitness_model.R")
 
 ####################################################
 # computing mu
@@ -31,7 +29,7 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
     }
 
     results <- data.frame (
-        beta_values = beta_values,
+        T_values = 1/beta_values,
         mu_mean = mu_mean,
         mu_std = mu_std
     )
@@ -45,13 +43,31 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
     return(results)
 }
 
+################################à
+
+# sources
+source("common.R")
+source("fitness_model.R")
+
 ################ initial parameter values
+
+
+
 m <- 1
 theta <- 1
 beta_values <- c(1, 1)#seq(0.1, 50, length.out=50)
 
 n_runs <- 1
+#################################################
+# PARALLELIZATION
 
+num_cores <- detectCores() - 2
+cl <- makeCluster(num_cores)
+
+# CRITICAL: Export your functions and any global variables the cluster needs
+# Replace 'igraph' with whatever package contains make_fitness_graph if applicable
+clusterEvalQ(cl, library(igraph)) 
+clusterExport(cl, c("run_single_simulation", "make_fitness_graph", "compute_partition_function", "N", "m"))
 res <- make_run(1000, n_runs=n_runs)
 
 print(res)
