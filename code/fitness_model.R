@@ -65,7 +65,7 @@ create_links <- function(g, m, attach_prob) {
     
 }
 
-main <- function(N,m=1, dt=1, theta=1,  beta=1) {
+make_fitness_graph <- function(N,m=1, dt=1, theta=1,  beta=1) {
     # creating first node
     # at time 1, at time 0 no nodes present
     g <- make_graph(edges=c(), n=1, directed=FALSE)
@@ -85,4 +85,4 @@ main <- function(N,m=1, dt=1, theta=1,  beta=1) {
     return(g)
 }
 
-main(N=10)
+#make_fitness_graph(N=10)
