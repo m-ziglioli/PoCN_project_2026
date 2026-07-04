@@ -65,9 +65,9 @@ source("fitness_model.R")
 ################ initial parameter values
 m <- 1
 theta <- 1
-T_values <- c(seq(0.05, 0.3, length.out=10)  , seq(0.3, 1.2, length.out=20), seq(1.2, 10, length.out=10))
+T_values <- c(seq(0.03, 0.3, length.out=15)  , seq(0.3, 1.2, length.out=20), seq(1.2, 10, length.out=10))
 beta_values <- 1/T_values
-n_runs <- 10
+n_runs <- 30
 #################################################
 # PARALLELIZATION
 
