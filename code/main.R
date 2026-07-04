@@ -24,28 +24,29 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
     }
 
 
-    results <- lapply(beta_values, function(beta) {
-        # mclapply automatically copies the sourced functions to the workers
-        mu_values <- mclapply(1:n_runs, function(i) {
-            run_single_simulation(beta, N, m)
-        }, mc.cores = num_cores)
-        
-        results_matrix <- do.call(rbind, results)
+   results <- lapply(beta_values, function(beta) {
+    # Run parallel simulations for the current beta
+    sim_list <- mclapply(1:n_runs, function(i) {
+        run_single_simulation(beta, N, m)
+    }, mc.cores = num_cores)        
     
-        # Extract the individual columns
-        mu_values  <- results[, 1]
-        gcc_values <- results[, 2]
-        
-        # Return calculated statistics for both mu and gcc
-        c(
-            mu_mean  = mean(mu_values), 
-            mu_std   = sd(mu_values),       # Using sd() is cleaner than sqrt(var())
-            gcc_mean = mean(gcc_values),
-            gcc_std  = sd(gcc_values)    )
-    }
+    sim_matrix <- do.call(rbind, sim_list)
 
-    # beta_values is global..
-    results_df <- data.frame(T_values = 1/beta_values, do.call(rbind, results))
+    # 3. Extract the individual columns
+    mu_values  <- sim_matrix[, 1]
+    gcc_values <- sim_matrix[, 2]
+    
+    # 4. Return calculated statistics for this beta
+    c(
+        mu_mean  = mean(mu_values), 
+        mu_std   = sd(mu_values),       
+        gcc_mean = mean(gcc_values),
+        gcc_std  = sd(gcc_values)    
+    )
+})
+
+# 5. Combine the global beta_values with the summarized rows
+results_df <- data.frame(T_values = 1/beta_values, do.call(rbind, results))
 
     if (save) {
         write.csv(results_df, file=paste0("../data/mu_values_N_", N, ".csv"), row.names=FALSE)
