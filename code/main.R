@@ -13,7 +13,12 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
         # These are the steps that create the graph and compute the partition function
         g <- make_fitness_graph(N, beta = beta, m = m)
         Z_t <- compute_partition_function(g)
-        return(Z_t / (m * vcount(g)))
+       
+        alpha <- Z_t / (m * vcount(g))
+
+        mu <- - 1/beta * 
+
+
     }
 
 
