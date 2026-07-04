@@ -17,18 +17,32 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
         alpha <- Z_t / (m * vcount(g))
         mu <- - 1/beta * log(alpha)
 
-        return(mu)
+        # giant connected component
+        gcc <- max(degree(g)) / N
+
+        return(c(mu, gcc))
     }
 
 
     results <- lapply(beta_values, function(beta) {
         # mclapply automatically copies the sourced functions to the workers
-        mu_values <- unlist(mclapply(1:n_runs, function(i) {
+        mu_values <- mclapply(1:n_runs, function(i) {
             run_single_simulation(beta, N, m)
-        }, mc.cores = num_cores))
+        }, mc.cores = num_cores)
         
-        c(mu_mean = mean(mu_values), mu_std = sqrt(var(mu_values)))
-        })
+        results_matrix <- do.call(rbind, results)
+    
+        # Extract the individual columns
+        mu_values  <- results[, 1]
+        gcc_values <- results[, 2]
+        
+        # Return calculated statistics for both mu and gcc
+        c(
+            mu_mean  = mean(mu_values), 
+            mu_std   = sd(mu_values),       # Using sd() is cleaner than sqrt(var())
+            gcc_mean = mean(gcc_values),
+            gcc_std  = sd(gcc_values)    )
+    }
 
     # beta_values is global..
     results_df <- data.frame(T_values = 1/beta_values, do.call(rbind, results))
@@ -50,7 +64,7 @@ source("fitness_model.R")
 ################ initial parameter values
 m <- 1
 theta <- 1
-T_values <- c(seq(0.1, 0.3, length.out=10)  , seq(0.3, 1.2, length.out=20), seq(1.2, 10, length.out=10))
+T_values <- c(seq(0.05, 0.3, length.out=10)  , seq(0.3, 1.2, length.out=20), seq(1.2, 10, length.out=10))
 beta_values <- 1/T_values
 n_runs <- 10
 #################################################
