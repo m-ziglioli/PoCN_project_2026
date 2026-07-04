@@ -15,10 +15,9 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
         Z_t <- compute_partition_function(g)
        
         alpha <- Z_t / (m * vcount(g))
+        mu <- - 1/beta * log(alpha)
 
-        mu <- - 1/beta * 
-
-
+        return(mu)
     }
 
 
@@ -41,19 +40,17 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
     return(results_df)
 }
 
-################################à
+################################
 
 # sources
 source("common.R")
 source("fitness_model.R")
+
+
 ################ initial parameter values
-
-
-
 m <- 1
 theta <- 1
-a <-seq(0.05, 1, length.out=20)
-T_values <- c(a, seq(1, 5, length.out=20))
+T_values <- c(seq(0.1, 0.3, length.out=10)  , seq(0.3, 1.2, length.out=20), seq(1.2, 10, length.out=10))
 beta_values <- 1/T_values
 n_runs <- 10
 #################################################
