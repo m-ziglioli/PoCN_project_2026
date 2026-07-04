@@ -1,0 +1,18 @@
+name: r_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-base
+  - r-essentials
+  - r-igraph
+  - r-rgl
+  - r-rcolorbrewer
+  - r-ggplot2
+  - r-desolve
+  - r-geosphere
+  - r-viridis
+  - r-fields
+  - r-mosaic
+  - r-parallelly
+prefix: /home/mattiaz/miniconda3/envs/r_env
