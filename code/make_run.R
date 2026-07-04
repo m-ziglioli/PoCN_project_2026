@@ -49,7 +49,7 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
 results_df <- data.frame(T_values = 1/beta_values, do.call(rbind, results))
 
     if (save) {
-        write.csv(results_df, file=paste0("../data/mu_values_N_", N, ".csv"), row.names=FALSE)
+        write.csv(results_df, file=paste0("../data/run_values_N_", N, ".csv"), row.names=FALSE)
     }
 
     return(results_df)
