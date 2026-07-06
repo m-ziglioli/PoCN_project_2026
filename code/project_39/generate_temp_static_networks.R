@@ -33,17 +33,19 @@ edgeList = edgeList[order(ID.x, ID.y, DAY_INTERACT)]
 
 # 3 & 4. Generate the final static network
 # This directly calculates total duration and counts total distinct contacts
-staticNetwork = edgeList[, .(
-  duration = sum(CUM_DURATION),
-  number_of_contacts       = .N
+static_net= edgeList[, .(
+  duration = sum(CUM_DURATION)
+  #number_of_contacts       = .N
 ), by = .(nodeID_from = ID.x, nodeID_to = ID.y)]
 
 # Save static network as CSV
-write.csv(staticNetwork, '../../data/project_39/static_network_sail_1.csv', row.names = FALSE)
+write.csv(static_net, '../../data/project_39/static_network_sail_1.csv', row.names = FALSE)
 
 # --- Temporal Network ---
 # Reconstruct a temporal network.
 # Columns: time, nodeID_from, nodeID_to, contact_duration, location_or_setting_if_available
+edgeList = copy(dataContact[SAIL==sail])
+
 temporal_net <- edgeList[, .(
   DAY_INTERACT = DAY_INTERACT,
   nodeID_from = ID.x,
