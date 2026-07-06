@@ -1,0 +1,9 @@
+Static Network Analysis:
+  File: static_network_sail_1.csv
+  Number of Nodes: 2181
+  Number of Edges: 618278
+
+Temporal Network Analysis:
+  File: temporal_network_sail_1.csv
+  Number of Nodes: 2184
+  Number of Edges: 1367586
