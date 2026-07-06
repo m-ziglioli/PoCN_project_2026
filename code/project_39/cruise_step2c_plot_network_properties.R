@@ -130,7 +130,7 @@ paneller=function(row = 1,column=1)
   
 }
 
-png('figure/graph.png',height=24,width=16,units='cm',res=300,pointsize=10)
+png('../../data/projec_39/figures/graph.png',height=24,width=16,units='cm',res=300,pointsize=10)
 
 pushViewport(plotViewport(c(2,2,2,1)))
 pushViewport(viewport(layout=grid.layout(nrow=3,ncol=1)))
