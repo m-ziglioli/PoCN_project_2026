@@ -15,5 +15,5 @@ Read and adhere to these guidelines for all tasks. If rules change, you will be 
 
 ### Workflow & Output
 - Before implementing any complex features or simulations, create a detailed workplan/implementation plan and present it for user approval.
-- Save all reports, text answers, or explanatory markdown/txt artifacts in the `code/project_39/ai_outputs/` directory.
+- Save all reports, text answers, or explanatory markdown/txt artifacts in the `code/project_39/ai_outputs/{prompt_number}.md` directory.
 - Save all prompts and answers i give you in the chat in folder `code&project_39/ai_outputs/log_{prompt_number}.md`
