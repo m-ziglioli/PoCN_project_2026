@@ -4,7 +4,7 @@ input_data/
 paper.pdf
 todo.md
 *.ipynb
-
+cruise_networks/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
