@@ -1,10 +1,19 @@
-Common set of rules for this project. Read this file once and keep in mind instructions. I will notify is anything changes
+# Common Rules for Project 39
 
-- the work is based on paper https://www.nature.com/articles/s41467-022-29522-y
-- always use R code
--  the code u write mus be in project_39/ folder or subfolders
-- output data to PoCN_project_2026/data/project_39/
-- input data found in   PoCN_project_2026/input_data
-- make workplan implementation and show it to me for approval
-- DON'T MODIFY CODE OUTSIDE OF THE SPECIFIED DIRECTORIES
-- Your answers in txt or md, artifacts or others in project_39/ai_outputs
+Read and adhere to these guidelines for all tasks. If rules change, you will be notified.
+
+### Reference & Context
+- The project is based on the Nature Communications paper: https://www.nature.com/articles/s41467-022-29522-y
+
+### Coding & File Constraints
+- **Language**: Always write, edit, and use R code.
+- **Scope**: All code modifications must be contained within the `code/project_39/` directory or its subdirectories. Do not modify files outside this directory.
+- **Directory Mappings**:
+  - Input datasets are located in: `PoCN_project_2026/input_data/`
+  - Output datasets must be saved to: `PoCN_project_2026/data/project_39/`
+  - *Note on Legacy Code Paths*: The legacy scripts use paths starting with `github/code/` and `github/data/`. Be prepared to resolve or map these correctly.
+
+### Workflow & Output
+- Before implementing any complex features or simulations, create a detailed workplan/implementation plan and present it for user approval.
+- Save all reports, text answers, or explanatory markdown/txt artifacts in the `code/project_39/ai_outputs/` directory.
+- Save all prompts and answers i give you in the chat in folder `code&project_39/ai_outputs/log_{prompt_number}.md`
