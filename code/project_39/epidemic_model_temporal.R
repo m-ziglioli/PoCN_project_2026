@@ -9,8 +9,9 @@
 
 library(dplyr)
 
-simulate_seir_abm <- function(network, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
+simulate_seir_temporal <- function(network, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
   # Ensure necessary columns exist
+  colnames(network) <- c("day","node_from", "node_to", "duration", "contact_types")
   if (!all(c("node_from", "node_to", "day", "duration") %in% colnames(network))) {
     stop("Network must contain: node_from, node_to, day, duration")
   }

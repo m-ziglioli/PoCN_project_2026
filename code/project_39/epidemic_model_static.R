@@ -10,11 +10,10 @@
 
 library(dplyr)
 
-simulate_seir_abm_static <- function(network, max_time = 100, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
+simulate_seir_static <- function(network, max_time = 100, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
   # Ensure necessary columns exist
-  if (!all(c("node_from", "node_to", "weight") %in% colnames(network))) {
-    stop("Network must contain: node_from, node_to, weight")
-  }
+  colnames(network) <- c("node_from", "node_to", "weight")
+
   
   # Ensure network is undirected for contacts (if A contacts B, B contacts A)
   net_reverse <- network
@@ -22,10 +21,7 @@ simulate_seir_abm_static <- function(network, max_time = 100, beta = 0.01, sigma
   net_reverse$node_to <- network$node_from
   net_full <- rbind(network, net_reverse)
   
-  # Aggregate weights to ensure one edge per pair
-  static_net <- net_full %>%
-    group_by(node_from, node_to) %>%
-    summarise(weight = sum(weight), .groups = 'drop')
+  static_net <- net_full
   
   # Identify all unique nodes
   nodes <- as.character(unique(c(static_net$node_from, static_net$node_to)))

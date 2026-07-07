@@ -1,5 +1,6 @@
 # FIRST MUST 
 Save as much token as possible.
+Remember this text
 
 # Common Rules for Project 39
 
