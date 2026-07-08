@@ -1,5 +1,5 @@
 library(parallel)
-source("generate_networks")
+source("generate_surrogate_network.R")
 
 simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs = 10, mc.cores = detectCores() - 1) {
   # Function to perform n_runs for a single beta
@@ -94,14 +94,14 @@ save_path <- "../../data/project_39/"
 static_nw <- read.csv("../../data/project_39/static_network_sail_1.csv")
 temporal_nw <-  read.csv("../../data/project_39/temporal_network_sail_1.csv")
 
-df <- simulate_real_networks(beta_values, temporal_nw, static=FALSE, nruns=30)
+df <- simulate_real_networks(beta_values, temporal_nw, static=FALSE, n_runs=30)
 save(df, file=paste0(save_path, "epidemic_real_temporal.RData"))
 
-df <- simulate_real_networks(beta_values, static_nw, static=TRUE, nruns=30)
+df <- simulate_real_networks(beta_values, static_nw, static=TRUE, n_runs=30)
 save(df, file=paste0(save_path, "epidemic_aggregate.RData"))
 
-df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", nruns=30)
+df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", n_runs=30)
 save(df, file=paste0(save_path, "epidemic_temporal_surrogate"))
 
-df <- simulate_real_networks(beta_values, network_type="ER_static", nruns=30)
+df <- simulate_real_networks(beta_values, network_type="ER_static", n_runs=30)
 save(df, file=paste0(save_path, "epidemic_static_surrogate"))
