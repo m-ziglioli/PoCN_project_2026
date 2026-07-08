@@ -10,7 +10,7 @@
 
 library(dplyr)
 
-simulate_seir_static <- function(network, max_time = 100, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
+simulate_seir_static <- function(network, max_time = 7, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
   # Ensure necessary columns exist
   colnames(network) <- c("node_from", "node_to", "weight")
 

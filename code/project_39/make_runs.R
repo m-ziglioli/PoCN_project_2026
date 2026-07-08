@@ -13,7 +13,7 @@ simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs =
         df <- simulate_seir_temporal(network, beta = beta)
       }
       
-      R_final <- df[nrow(df), "R"]
+      R_final <- df[nrow(df), c("I", "R")]
       N <- sum(df[nrow(df), c("S", "E", "I", "R")])
       
       return(R_final / N)
@@ -62,7 +62,7 @@ simulate_surrogate_networks <- function(beta_values, network_type=c("ER_temporal
         df <- simulate_seir_temporal(network, beta = beta)
       }
       
-      R_final <- df[nrow(df), "R"]
+      R_final <- df[nrow(df), c("I", "R")]
       N <- sum(df[nrow(df), c("S", "E", "I", "R")])
       
       return(R_final / N)
