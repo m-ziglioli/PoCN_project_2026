@@ -49,8 +49,17 @@ create_links <- function(g, m, attach_prob) {
     # sample m nodes among the old nodes V(g)[1:(N-1)]
     # and attach the new links to them
     z <- length(V(g)) - 1
-    idxs <- sample(1:z, size=m, replace=TRUE, 
+    
+    # distinguish if m<z there are enough old nodes to make 
+    # m new connections
+    if (m < z ) {
+        idxs <- sample(1:z, size=m, replace=FALSE, 
                     prob=attach_prob)
+    }
+    else {
+        idxs <- sample(1:z, size=m, replace=TRUE, 
+                    prob=attach_prob)
+    }
 
     chosen_nodes <- V(g)[idxs]
     new_node <- V(g)[vcount(g)]
