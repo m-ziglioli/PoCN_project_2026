@@ -9,7 +9,7 @@
 
 library(dplyr)
 
-simulate_seir_temporal <- function(network, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05) {
+simulate_seir_temporal <- function(network, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05, scale_factor=15) {
   # Ensure necessary columns exist
   colnames(network) <- c("day","node_from", "node_to", "duration", "contact_types")
   if (!all(c("node_from", "node_to", "day", "duration") %in% colnames(network))) {
@@ -76,7 +76,7 @@ simulate_seir_temporal <- function(network, beta = 0.01, sigma = 1/3, gamma = 1/
         foi <- risk_contacts %>%
           group_by(node_to) %>%
           summarise(total_weight = sum(weight), .groups = 'drop') %>%
-          mutate(prob_inf = 1 - exp(-beta * total_weight))
+          mutate(prob_inf = 1 - exp(-beta * (total_weight/scale_factor)))
         
         # Sample new infections
         new_infections <- foi$node_to[runif(nrow(foi)) < foi$prob_inf]
