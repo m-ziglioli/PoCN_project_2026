@@ -23,7 +23,7 @@ simulate_for_different_beta <- function(beta_values, network, static = TRUE, n_r
     
     return(c(beta = beta, 
              avg_frac_recov = mean(results), 
-             std_frac_recov = sd(results)))
+             std_frac_recov = sd(results) / sqrt(n_runs)))
   }
   
   # Apply the function over all beta values
