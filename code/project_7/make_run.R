@@ -18,7 +18,7 @@ make_run <- function(N, n_runs, m=1, theta=1, save=TRUE) {
         mu <- - 1/beta * log(alpha)
 
         # giant connected component
-        gcc <- max(degree(g)) / N
+        gcc <- max(degree(g)) / (m*N)
 
         return(c(mu, gcc))
     }
@@ -65,7 +65,7 @@ source("fitness_model.R")
 
 
 ################ initial parameter values
-m <- 1
+m <- 2
 theta <- 1
 T_values <- c(seq(0.03, 0.3, length.out=15)  , seq(0.3, 1.2, length.out=20), seq(1.2, 10, length.out=15))
 beta_values <- 1/T_values
@@ -73,7 +73,7 @@ n_runs <- 30
 #################################################
 # PARALLELIZATION
 
-num_cores <- detectCores() - 2
+num_cores <- detectCores() - 1
 cl <- makeCluster(num_cores)
 
 # making runs for N=1000, N=1e4, N=1e5

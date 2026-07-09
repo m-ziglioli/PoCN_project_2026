@@ -10,7 +10,7 @@
 
 library(dplyr)
 
-simulate_seir_static <- function(network, max_time = 7, beta = 0.01, sigma = 1/3, gamma = 1/5, init_I_frac = 0.05, scale_factor=15) {
+simulate_seir_static <- function(network, max_time = 7, beta = 0.01, tau_E = 3, tau_I = 5, tau_R = Inf, init_I_frac = 0.05, scale_factor=15) {
   # Ensure necessary columns exist
   colnames(network) <- c("node_from", "node_to", "weight")
 
@@ -31,10 +31,15 @@ simulate_seir_static <- function(network, max_time = 7, beta = 0.01, sigma = 1/3
   states <- rep(1, N) # All Susceptible
   names(states) <- nodes
   
+  # Keep track of state entry times
+  t_creation <- rep(0, N)
+  names(t_creation) <- nodes
+  
   # Seed initial infections
   num_init_I <- max(1, round(N * init_I_frac))
   init_I_nodes <- sample(nodes, num_init_I)
   states[init_I_nodes] <- 3 # Set to Infectious
+  t_creation[init_I_nodes] <- 0
   
   # Results dataframe
   results <- data.frame(time = integer(), S = integer(), E = integer(), 
@@ -70,23 +75,47 @@ simulate_seir_static <- function(network, max_time = 7, beta = 0.01, sigma = 1/3
           mutate(prob_inf = 1 - exp(-beta * (total_weight/scale_factor)))
         
         # Sample new infections
-        new_infections <- foi$node_to[runif(nrow(foi)) < foi$prob_inf]
-        states[as.character(new_infections)] <- 2 # Transition S -> E
+        new_infections <- as.character(foi$node_to[runif(nrow(foi)) < foi$prob_inf])
+        if (length(new_infections) > 0) {
+          states[new_infections] <- 2 # Transition S -> E
+          t_creation[new_infections] <- t
+        }
       }
     }
     
     # Process Exposed to Infectious
     exposed_nodes <- names(states)[states == 2]
     if (length(exposed_nodes) > 0) {
-      new_I <- exposed_nodes[runif(length(exposed_nodes)) < sigma]
-      states[new_I] <- 3 # Transition E -> I
+      epsilon_E <- (t - t_creation[exposed_nodes]) / tau_E
+      new_I <- exposed_nodes[runif(length(exposed_nodes)) < epsilon_E]
+      if (length(new_I) > 0) {
+        states[new_I] <- 3 # Transition E -> I
+        t_creation[new_I] <- t
+      }
     }
     
     # Process Infectious to Recovered
     # Only consider nodes that were already infectious at the START of the time step
     if (length(infectious_nodes) > 0) {
-      new_R <- infectious_nodes[runif(length(infectious_nodes)) < gamma]
-      states[new_R] <- 4 # Transition I -> R
+      epsilon_I <- (t - t_creation[infectious_nodes]) / tau_I
+      new_R <- infectious_nodes[runif(length(infectious_nodes)) < epsilon_I]
+      if (length(new_R) > 0) {
+        states[new_R] <- 4 # Transition I -> R
+        t_creation[new_R] <- t
+      }
+    }
+    
+    # Process Recovered to Susceptible
+    if (is.finite(tau_R)) {
+      recovered_nodes <- names(states)[states == 4]
+      if (length(recovered_nodes) > 0) {
+        epsilon_R <- (t - t_creation[recovered_nodes]) / tau_R
+        new_S <- recovered_nodes[runif(length(recovered_nodes)) < epsilon_R]
+        if (length(new_S) > 0) {
+          states[new_S] <- 1 # Transition R -> S
+          t_creation[new_S] <- t
+        }
+      }
     }
     
     # Optional early stopping if no one is exposed or infectious
