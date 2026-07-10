@@ -45,24 +45,28 @@ attraction_probabilities <- function(g) {
 }
 
 create_links <- function(g, m, attach_prob) {
-    
-    # sample m nodes among the old nodes V(g)[1:(N-1)]
-    # and attach the new links to them
-    z <- length(V(g)) - 1
-    idxs <- sample(1:z, size=m, replace=TRUE, 
-                    prob=attach_prob)
+    # The new node is always the last one added
+    new_node_idx <- vcount(g)
 
-    chosen_nodes <- V(g)[idxs]
-    new_node <- V(g)[vcount(g)]
+    z <- new_node_idx - 1 
 
-    for (j in seq_along(chosen_nodes)) {
-        old_node <- chosen_nodes[j]
-        g <- add_edges(g, c(new_node, old_node))
+    probs_for_old_nodes <- attach_prob[1:z]
+    if (sum(probs_for_old_nodes) == 0) {
+        probs_for_old_nodes <- rep(1/z, z)
     }
+
+    # Sample numeric indices
+    if (m < z) {
+        idxs <- sample(1:z, size=m, replace=FALSE, prob=probs_for_old_nodes)
+    } else {
+        idxs <- sample(1:z, size=m, replace=TRUE, prob=probs_for_old_nodes)
+    }
+
+    # Vectorized edge addition: c(new, old1, new, old2, new, old3...)
+    edges_vector <- as.vector(rbind(new_node_idx, idxs))
+    g <- add_edges(g, edges_vector)
     
     return(g)
-
-    
 }
 
 make_fitness_graph <- function(N,m=1, dt=1, theta=1,  beta=1) {
