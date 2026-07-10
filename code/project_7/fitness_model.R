@@ -74,10 +74,26 @@ create_links <- function(g, m, attach_prob) {
     
 }
 
+make_starting_graph <- function(beta) {
+    node_form <- 1:10
+    node_to <- sample(1:10, replace=TRUE)
+
+    df <- data.frame(node_from=node_from, node_to=node_to)
+
+    g <- graph_from_data_frame(df)
+
+    fit <- numeric(10)
+    for (i in 1:10) {
+        fit[i] <- draw_fitness(beta=beta)
+    }
+
+    V(g)$fitness <- fit
+    return(g)
+}
+
 make_fitness_graph <- function(N,m=1, dt=1, theta=1,  beta=1) {
-    # creating first node
-    # at time 1, at time 0 no nodes present
-    g <- make_graph(edges=c(), n=1, directed=FALSE)
+    # creating starting graph with 10 nodes
+    g <- make_starting_graph(beta)
 
     V(g)$fitness <- draw_fitness(theta, beta)
 
