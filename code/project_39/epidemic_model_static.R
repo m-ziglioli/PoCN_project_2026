@@ -10,7 +10,7 @@
 
 library(dplyr)
 
-simulate_seir_static <- function(network, max_time = 7, beta = 0.01, tau_E = 5, tau_I = 14, tau_R = Inf, init_I_frac = 0.01, scale_factor=15) {
+simulate_seir_static <- function(network, max_time = 3, beta = 0.01, tau_E = 5, tau_I = 14, tau_R = Inf, init_I_frac = 0.01, scale_factor=15) {
   # time is in days
   # tau_E: time needed to become I
   # tau_I: time needed to become R

@@ -9,7 +9,7 @@
 
 library(dplyr)
 
-simulate_seir_temporal <- function(network, beta = 0.01, tau_E = 5, tau_I = 14, tau_R = Inf, init_I_frac = 0.05, scale_factor=15) {
+simulate_seir_temporal <- function(network, beta = 0.01, tau_E = 5, tau_I = 14, tau_R = Inf, init_I_frac = 0.01, scale_factor=15) {
   # Ensure necessary columns exist
   colnames(network) <- c("node_from", "node_to", "day","duration", "contact_type")
   if (!all(c("node_from", "node_to", "day", "duration") %in% colnames(network))) {

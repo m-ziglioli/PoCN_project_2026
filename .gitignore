@@ -3,7 +3,6 @@ cruise_networks/
 input_data/
 paper.pdf
 todo.md
-*.ipynb
 cruise_network/*
 # Byte-compiled / optimized / DLL files
 __pycache__/

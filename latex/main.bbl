@@ -1,0 +1,36 @@
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Alsved et~al.(2023)Alsved, Nystr{\"o}m, Thuresson, Nygren, Patzi-Churqui, Hussein, Fraenkel, Medstrand, and L{\"o}ndahl]{alsved2023infectivity}
+Malin Alsved, Kristina Nystr{\"o}m, Sara Thuresson, David Nygren, Marianela Patzi-Churqui, Tareq Hussein, Carl-Johan Fraenkel, Patrik Medstrand, and Jakob L{\"o}ndahl.
+\newblock Infectivity of exhaled sars-cov-2 aerosols is sufficient to transmit covid-19 within minutes.
+\newblock \emph{Scientific Reports}, 13\penalty0 (1):\penalty0 21245, 2023.
+
+\bibitem[Barabási(2000)]{ba2000competition}
+G.~Bianconi A.~L. Barabási.
+\newblock Competition and multiscaling in evolving networks.
+\newblock 2000.
+\newblock URL \url{https://arxiv.org/abs/cond-mat/0011029}.
+
+\bibitem[Bianconi and Barab\'asi(2001)]{ba2001bose-einstein}
+Ginestra Bianconi and Albert-L\'aszl\'o Barab\'asi.
+\newblock Bose-einstein condensation in complex networks.
+\newblock \emph{Phys. Rev. Lett.}, 86:\penalty0 5632--5635, Jun 2001.
+\newblock \doi{10.1103/PhysRevLett.86.5632}.
+\newblock URL \url{https://link.aps.org/doi/10.1103/PhysRevLett.86.5632}.
+
+\bibitem[Lauer et~al.(2020)Lauer, Grantz, Bi, Jones, Zheng, Meredith, Azman, Reich, and Lessler]{lauer2020incubation}
+Stephen~A Lauer, Kyra~H Grantz, Qifang Bi, Forrest~K Jones, Qulu Zheng, Hannah~R Meredith, Andrew~S Azman, Nicholas~G Reich, and Justin Lessler.
+\newblock The incubation period of coronavirus disease 2019 (covid-19) from publicly reported confirmed cases: estimation and application.
+\newblock \emph{Annals of internal medicine}, 172\penalty0 (9):\penalty0 577--582, 2020.
+
+\bibitem[Pung and Firth(2022)]{pung2022using}
+Rachael Pung and Josh A et~al. Firth.
+\newblock Using high-resolution contact networks to evaluate sars-cov-2 transmission and control in large-scale multi-day events.
+\newblock \emph{Nature communications}, 13\penalty0 (1):\penalty0 1956, 2022.
+
+\end{thebibliography}
