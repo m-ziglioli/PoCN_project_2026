@@ -15,7 +15,7 @@ simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs =
         }
         
         last_row <- df[nrow(df), c("S", "E", "I", "R")]
-        N <- sum(last_row)
+        N <- sum(as.numeric(last_row))
         
         c(frac_inf = as.numeric(last_row[["I"]]) / N,
           frac_recov = as.numeric(last_row[["R"]]) / N)
@@ -73,7 +73,7 @@ simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, 
         }
         
         last_row <- df[nrow(df), c("S", "E", "I", "R")]
-        N <- sum(last_row)
+        N <- sum(as.numeric(last_row))
         
         c(frac_inf = as.numeric(last_row[["I"]]) / N,
           frac_recov = as.numeric(last_row[["R"]]) / N)

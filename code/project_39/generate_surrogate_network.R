@@ -12,17 +12,21 @@ generate_ER_temporal <- function() {
   nodes <- unique(c(temporal_nw$node_from, temporal_nw$node_to))
   n <- nrow(temporal_nw)
 
-  rand_pairs <- data.frame()
+  rand_pairs_list <- list()
+  total_rows <- 0
 
-  while (nrow(rand_pairs) < n) {
-  tmp <- data.frame(
-      node_from = sample(nodes, n, replace = TRUE),
-      node_to = sample(nodes, n, replace = TRUE)
-  )
-  tmp <- tmp[tmp$node_from != tmp$node_to, ]
-  rand_pairs <- rbind(rand_pairs, tmp)
+  while (total_rows < n) {
+    tmp <- data.frame(
+        node_from = sample(nodes, n, replace = TRUE),
+        node_to = sample(nodes, n, replace = TRUE),
+        stringsAsFactors = FALSE
+    )
+    tmp <- tmp[tmp$node_from != tmp$node_to, ]
+    rand_pairs_list[[length(rand_pairs_list) + 1]] <- tmp
+    total_rows <- total_rows + nrow(tmp)
   }
 
+  rand_pairs <- do.call(rbind, rand_pairs_list)
   rand_pairs <- rand_pairs[1:n, ]
 
   temporal_nw$node_from <- rand_pairs$node_from
