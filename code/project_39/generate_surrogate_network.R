@@ -1,6 +1,7 @@
 ##################################################à
 # Functions to generate temporal and static surrogates 
 # of the network
+library(igraph)
 
 generate_ER_temporal <- function() {
   # preserving number of nodes and contacts,

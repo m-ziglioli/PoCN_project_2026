@@ -9,9 +9,9 @@
 
 library(dplyr)
 
-simulate_seir_temporal <- function(network, beta = 0.01, tau_E = 3, tau_I = 5, tau_R = Inf, init_I_frac = 0.05, scale_factor=15) {
+simulate_seir_temporal <- function(network, beta = 0.01, tau_E = 5, tau_I = 14, tau_R = Inf, init_I_frac = 0.05, scale_factor=15) {
   # Ensure necessary columns exist
-  colnames(network) <- c("day","node_from", "node_to", "duration", "contact_types")
+  colnames(network) <- c("node_from", "node_to", "day", "duration", "contact_types")
   if (!all(c("node_from", "node_to", "day", "duration") %in% colnames(network))) {
     stop("Network must contain: node_from, node_to, day, duration")
   }
@@ -47,7 +47,7 @@ simulate_seir_temporal <- function(network, beta = 0.01, tau_E = 3, tau_I = 5, t
   
   # Time range
   days <- sort(unique(daily_net$day))
-  max_day <- max(days)
+  max_day <- if (length(days) > 0) max(days) else 0
   
   # Results dataframe
   results <- data.frame(day = integer(), S = integer(), E = integer(), 

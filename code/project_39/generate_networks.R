@@ -47,9 +47,9 @@ write.csv(static_net, '../../data/project_39/static_network_sail_1.csv', row.nam
 edgeList = copy(dataContact[SAIL==sail])
 
 temporal_net <- edgeList[, .(
-  DAY_INTERACT = DAY_INTERACT,
   node_from = ID.x,
   node_to = ID.y,
+  DAY_INTERACT = DAY_INTERACT,
   contact_duration = round(DURATION /60, digits=3),
   contact_type = CONTACT_TYPE
 )]

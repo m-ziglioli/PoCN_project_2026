@@ -1,85 +1,107 @@
 library(parallel)
 source("generate_surrogate_network.R")
+source("epidemic_model_static.R")
+source("epidemic_model_temporal.R")
 
-simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs = 10, mc.cores = detectCores() - 1) {
-  # Function to perform n_runs for a single beta
+simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs = 10, mc.cores = detectCores() - 2) {
   simulate_single_beta <- function(beta) {
     
-    # Run n_runs times using mclapply
     results <- mclapply(1:n_runs, function(run) {
-      if (static) {
-        df <- simulate_seir_static(network, beta = beta)
-      } else {
-        df <- simulate_seir_temporal(network, beta = beta)
-      }
-      
-      R_final <- df[nrow(df), c("I", "R")]
-      N <- sum(df[nrow(df), c("S", "E", "I", "R")])
-      
-      return(R_final / N)
+      tryCatch({
+        if (static) {
+          df <- simulate_seir_static(network, beta = beta)
+        } else {
+          df <- simulate_seir_temporal(network, beta = beta)
+        }
+        
+        last_row <- df[nrow(df), c("S", "E", "I", "R")]
+        N <- sum(last_row)
+        
+        c(frac_inf = as.numeric(last_row[["I"]]) / N,
+          frac_recov = as.numeric(last_row[["R"]]) / N)
+      }, error = function(e) {
+        message(sprintf("beta=%s, run=%d failed: %s", beta, run, conditionMessage(e)))
+        NULL
+      })
     }, mc.cores = mc.cores)
     
-    # Unlist results and calculate mean and standard deviation
-    results <- unlist(results)
+    # Rimuove i run falliti (NULL o errori interni al forking)
+    results <- results[!sapply(results, function(x) is.null(x) || inherits(x, "try-error"))]
+    
+    if (length(results) == 0) {
+      warning(sprintf("Tutti i run sono falliti per beta=%s", beta))
+      return(c(beta = beta, avg_frac_inf = NA, std_frac_inf = NA,
+               avg_frac_recov = NA, std_frac_recov = NA))
+    }
+    
+    results_mat <- do.call(rbind, results)
+    n_successful <- nrow(results_mat)
     
     return(c(beta = beta, 
-             avg_frac_recov = mean(results), 
-             std_frac_recov = sd(results) / sqrt(n_runs)))
+             avg_frac_inf = mean(results_mat[, "frac_inf"]),
+             std_frac_inf = sd(results_mat[, "frac_inf"]) / sqrt(n_successful),
+             avg_frac_recov = mean(results_mat[, "frac_recov"]), 
+             std_frac_recov = sd(results_mat[, "frac_recov"]) / sqrt(n_successful)))
   }
   
-  # Apply the function over all beta values
   final_results <- lapply(beta_values, simulate_single_beta)
-  
-  # Combine results into a dataframe
   final_results_df <- do.call(rbind, final_results)
   
   return(as.data.frame(final_results_df))
 }
 
-simulate_surrogate_networks <- function(beta_values, network_type=c("ER_temporal, ER_static"), n_runs = 10, mc.cores = detectCores() - 1) {
+simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, mc.cores = detectCores() - 2) {
 
   if (network_type == "ER_temporal") {
     generate_network <- generate_ER_temporal
     static <- FALSE
-  }
-  else{
+  } else {
     generate_network <- generate_ER_static
     static <- TRUE
   }
 
-
-  # Function to perform n_runs for a single beta
   simulate_single_beta <- function(beta) {
     
-    # Run n_runs times using mclapply
     results <- mclapply(1:n_runs, function(run) {
-      # generating the surrogate network
-      network <- generate_network()
-
-      if (static) {
-        df <- simulate_seir_static(network, beta = beta)
-      } else {
-        df <- simulate_seir_temporal(network, beta = beta)
-      }
-      
-      R_final <- df[nrow(df), c("I", "R")]
-      N <- sum(df[nrow(df), c("S", "E", "I", "R")])
-      
-      return(R_final / N)
+      tryCatch({
+        network <- generate_network()
+        
+        if (static) {
+          df <- simulate_seir_static(network, beta = beta)
+        } else {
+          df <- simulate_seir_temporal(network, beta = beta)
+        }
+        
+        last_row <- df[nrow(df), c("S", "E", "I", "R")]
+        N <- sum(last_row)
+        
+        c(frac_inf = as.numeric(last_row[["I"]]) / N,
+          frac_recov = as.numeric(last_row[["R"]]) / N)
+      }, error = function(e) {
+        message(sprintf("beta=%s, run=%d failed: %s", beta, run, conditionMessage(e)))
+        NULL
+      })
     }, mc.cores = mc.cores)
     
-    # Unlist results and calculate mean and standard deviation
-    results <- unlist(results)
+    results <- results[!sapply(results, function(x) is.null(x) || inherits(x, "try-error"))]
+    
+    if (length(results) == 0) {
+      warning(sprintf("Tutti i run sono falliti per beta=%s", beta))
+      return(c(beta = beta, avg_frac_inf = NA, std_frac_inf = NA,
+               avg_frac_recov = NA, std_frac_recov = NA))
+    }
+    
+    results_mat <- do.call(rbind, results)
+    n_successful <- nrow(results_mat)
     
     return(c(beta = beta, 
-             avg_frac_recov = mean(results), 
-             std_frac_recov = sd(results) / sqrt(n_runs)))
+             avg_frac_inf = mean(results_mat[, "frac_inf"]),
+             std_frac_inf = sd(results_mat[, "frac_inf"]) / sqrt(n_successful),
+             avg_frac_recov = mean(results_mat[, "frac_recov"]), 
+             std_frac_recov = sd(results_mat[, "frac_recov"]) / sqrt(n_successful)))
   }
   
-  # Apply the function over all beta values
   final_results <- lapply(beta_values, simulate_single_beta)
-  
-  # Combine results into a dataframe
   final_results_df <- do.call(rbind, final_results)
   
   return(as.data.frame(final_results_df))
@@ -88,20 +110,20 @@ simulate_surrogate_networks <- function(beta_values, network_type=c("ER_temporal
 
 # Executing runs
 
-beta_values <- 1:10
+beta_values <- c(0.05, 0.1, 0.2, 0.25, 0.5, 1)
 save_path <- "../../data/project_39/"
 
 static_nw <- read.csv("../../data/project_39/static_network_sail_1.csv")
 temporal_nw <-  read.csv("../../data/project_39/temporal_network_sail_1.csv")
 
-df <- simulate_real_networks(beta_values, temporal_nw, static=FALSE, n_runs=30)
-save(df, file=paste0(save_path, "epidemic_real_temporal.RData"))
+#df <- simulate_real_networks(beta_values, temporal_nw, static=FALSE, n_runs=30)
+#write.csv(df, file=paste0(save_path, "epidemic_real_temporal.csv"), row.names=FALSE)
 
-df <- simulate_real_networks(beta_values, static_nw, static=TRUE, n_runs=30)
-save(df, file=paste0(save_path, "epidemic_aggregate.RData"))
+#df <- simulate_real_networks(beta_values, static_nw, static=TRUE, n_runs=30)
+#write.csv(df, file=paste0(save_path, "epidemic_real_aggregate.csv"), row.names=FALSE)
 
 df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", n_runs=30)
-save(df, file=paste0(save_path, "epidemic_temporal_surrogate"))
+write.csv(df, file=paste0(save_path, "epidemic_ER_temporal.csv"), row.names=FALSE)
 
-df <- simulate_real_networks(beta_values, network_type="ER_static", n_runs=30)
-save(df, file=paste0(save_path, "epidemic_static_surrogate"))
+df <- simulate_surrogate_networks(beta_values, network_type="ER_static", n_runs=30)
+write.csv(df, file=paste0(save_path, "epidemic_ER_static.csv"), row.names=FALSE)
