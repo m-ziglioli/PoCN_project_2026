@@ -3,10 +3,10 @@ source("generate_surrogate_network.R")
 source("epidemic_model_static.R")
 source("epidemic_model_temporal.R")
 
-simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs = 10, mc.cores = detectCores() - 2) {
+simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs = 10, mc.cores = max(1, parallel::detectCores() - 2)) {
   simulate_single_beta <- function(beta) {
     
-    results <- mclapply(1:n_runs, function(run) {
+    results <- lapply(1:n_runs, function(run) {
       tryCatch({
         if (static) {
           df <- simulate_seir_static(network, beta = beta)
@@ -23,7 +23,7 @@ simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs =
         message(sprintf("beta=%s, run=%d failed: %s", beta, run, conditionMessage(e)))
         NULL
       })
-    }, mc.cores = mc.cores)
+    })
     
     # Rimuove i run falliti (NULL o errori interni al forking)
     results <- results[!sapply(results, function(x) is.null(x) || inherits(x, "try-error"))]
@@ -50,7 +50,7 @@ simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs =
   return(as.data.frame(final_results_df))
 }
 
-simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, mc.cores = detectCores() - 2, temporal_nw = NULL, static_nw = NULL) {
+simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, mc.cores = max(1, parallel::detectCores() - 2), temporal_nw = NULL, static_nw = NULL) {
 
   if (network_type == "ER_temporal") {
     generate_network <- function() generate_ER_temporal(temporal_nw)
@@ -62,7 +62,7 @@ simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, 
 
   simulate_single_beta <- function(beta) {
     
-    results <- mclapply(1:n_runs, function(run) {
+    results <- lapply(1:n_runs, function(run) {
       tryCatch({
         network <- generate_network()
         
@@ -81,7 +81,7 @@ simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, 
         message(sprintf("beta=%s, run=%d failed: %s", beta, run, conditionMessage(e)))
         NULL
       })
-    }, mc.cores = mc.cores)
+    })
     
     results <- results[!sapply(results, function(x) is.null(x) || inherits(x, "try-error"))]
     
