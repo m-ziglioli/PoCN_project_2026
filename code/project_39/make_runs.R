@@ -75,8 +75,12 @@ simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, 
         last_row <- df[nrow(df), c("S", "E", "I", "R")]
         N <- sum(as.numeric(last_row))
         
-        c(frac_inf = as.numeric(last_row[["I"]]) / N,
-          frac_recov = as.numeric(last_row[["R"]]) / N)
+        res <- c(frac_inf = as.numeric(last_row[["I"]]) / N,
+                 frac_recov = as.numeric(last_row[["R"]]) / N)
+        
+        rm(network, df)
+        
+        res
       }, error = function(e) {
         message(sprintf("beta=%s, run=%d failed: %s", beta, run, conditionMessage(e)))
         NULL
@@ -96,9 +100,9 @@ simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, 
     
     return(c(beta = beta, 
              avg_frac_inf = mean(results_mat[, "frac_inf"]),
-             std_frac_inf = sd(results_mat[, "frac_inf"]) / sqrt(n_successful),
+             std_frac_inf = std_inf,
              avg_frac_recov = mean(results_mat[, "frac_recov"]), 
-             std_frac_recov = sd(results_mat[, "frac_recov"]) / sqrt(n_successful)))
+             std_frac_recov = std_recov))
   }
   
   final_results <- lapply(beta_values, simulate_single_beta)
@@ -122,8 +126,8 @@ temporal_nw <-  read.csv("../../data/project_39/temporal_network_sail_1.csv")
 #df <- simulate_real_networks(beta_values, static_nw, static=TRUE, n_runs=30)
 #write.csv(df, file=paste0(save_path, "epidemic_real_aggregate.csv"), row.names=FALSE)
 
-df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", n_runs=1, temporal_nw=temporal_nw)
+df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", n_runs=30, temporal_nw=temporal_nw)
 write.csv(df, file=paste0(save_path, "epidemic_ER_temporal.csv"), row.names=FALSE)
 
-df <- simulate_surrogate_networks(beta_values, network_type="ER_static", n_runs=1, static_nw=static_nw)
+df <- simulate_surrogate_networks(beta_values, network_type="ER_static", n_runs=30, static_nw=static_nw)
 write.csv(df, file=paste0(save_path, "epidemic_ER_static.csv"), row.names=FALSE)
