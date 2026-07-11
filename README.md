@@ -3,3 +3,6 @@ Reposistoy for the theroretical and data project of Physics of Complex Networks 
 
 * Project 7: score 0.4 
 * Project 39: score 1.2
+    * node file: nodeList.csv
+    * temporal_network: temporal_network_sail_1
+    * aggregated_network: static_network_sail_1
