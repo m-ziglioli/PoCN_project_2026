@@ -1,0 +1,5 @@
+source("make_runs.R")
+cat("Testing ER_temporal...\n")
+res <- simulate_surrogate_networks(c(0.1), network_type="ER_temporal", n_runs=2)
+cat("Done!\n")
+print(res)

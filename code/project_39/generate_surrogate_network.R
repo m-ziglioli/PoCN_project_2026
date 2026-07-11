@@ -3,11 +3,13 @@
 # of the network
 library(igraph)
 
-generate_ER_temporal <- function() {
+generate_ER_temporal <- function(temporal_nw = NULL) {
   # preserving number of nodes and contacts,
   # while randomizing interacting pairs
 
-  temporal_nw <- read.csv("../../data/project_39/temporal_network_sail_1.csv")
+  if (is.null(temporal_nw)) {
+    temporal_nw <- read.csv("../../data/project_39/temporal_network_sail_1.csv")
+  }
 
   nodes <- unique(c(temporal_nw$node_from, temporal_nw$node_to))
   n <- nrow(temporal_nw)
@@ -35,14 +37,18 @@ generate_ER_temporal <- function() {
   return(temporal_nw)
 }
 
-generate_ER_static <- function() {
+generate_ER_static <- function(static_nw = NULL, nodes = NULL) {
   # erdos-renyi model preserving number of nodes and edges of the aggregated static network,
   # reshuffling the weights
 
-  nodes <- read.csv("../../data/project_39/nodeList.csv")
+  if (is.null(nodes)) {
+    nodes <- read.csv("../../data/project_39/nodeList.csv")
+  }
   N <- nrow(nodes)
 
-  static_nw <- read.csv("../../data/project_39/static_network_sail_1.csv")
+  if (is.null(static_nw)) {
+    static_nw <- read.csv("../../data/project_39/static_network_sail_1.csv")
+  }
   edges <- nrow(static_nw)
 
   g<-erdos.renyi.game(n=N, p.or.m= edges, type="gnm" ,loops = FALSE)

@@ -50,13 +50,13 @@ simulate_real_networks <- function(beta_values, network, static = TRUE, n_runs =
   return(as.data.frame(final_results_df))
 }
 
-simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, mc.cores = detectCores() - 2) {
+simulate_surrogate_networks <- function(beta_values, network_type, n_runs = 10, mc.cores = detectCores() - 2, temporal_nw = NULL, static_nw = NULL) {
 
   if (network_type == "ER_temporal") {
-    generate_network <- generate_ER_temporal
+    generate_network <- function() generate_ER_temporal(temporal_nw)
     static <- FALSE
   } else {
-    generate_network <- generate_ER_static
+    generate_network <- function() generate_ER_static(static_nw)
     static <- TRUE
   }
 
@@ -122,8 +122,8 @@ temporal_nw <-  read.csv("../../data/project_39/temporal_network_sail_1.csv")
 #df <- simulate_real_networks(beta_values, static_nw, static=TRUE, n_runs=30)
 #write.csv(df, file=paste0(save_path, "epidemic_real_aggregate.csv"), row.names=FALSE)
 
-df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", n_runs=30)
+df <- simulate_surrogate_networks(beta_values, network_type="ER_temporal", n_runs=1, temporal_nw=temporal_nw)
 write.csv(df, file=paste0(save_path, "epidemic_ER_temporal.csv"), row.names=FALSE)
 
-df <- simulate_surrogate_networks(beta_values, network_type="ER_static", n_runs=30)
+df <- simulate_surrogate_networks(beta_values, network_type="ER_static", n_runs=1, static_nw=static_nw)
 write.csv(df, file=paste0(save_path, "epidemic_ER_static.csv"), row.names=FALSE)
